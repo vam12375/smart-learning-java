@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: user-service
+  
+  profiles:
+    active: dev
+  
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+        namespace: smart-learning
+        group: DEFAULT_GROUP
+        file-extension: yml
+        username: nacos
+        password: nacos
+        # 共享配置
+        shared-configs:
+          - data-id: common-config.yml
+            group: DEFAULT_GROUP
+            refresh: true
+        # 扩展配置
+        extension-configs:
+          - data-id: ${spring.application.name}-${spring.profiles.active}.yml
+            group: DEFAULT_GROUP
+            refresh: true
+      discovery:
+        server-addr: localhost:8848
+        namespace: smart-learning
+        group: DEFAULT_GROUP
+        cluster-name: DEFAULT
+        service: ${spring.application.name}
+        username: nacos
+        password: nacos
+        metadata:
+          version: 1.0.0
+          zone: dev
+          management.context-path: /actuator

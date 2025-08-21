@@ -1,0 +1,134 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: learning-gateway
+  
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: learning-platform
+      config:
+        server-addr: localhost:8848
+        file-extension: yml
+        namespace: learning-platform
+    
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      
+      routes:
+        # 用户服务路由
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/user/**,/api/auth/**
+          filters:
+            - StripPrefix=1
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+                key-resolver: "#{@ipKeyResolver}"
+        
+        # 课程服务路由
+        - id: course-service
+          uri: lb://course-service
+          predicates:
+            - Path=/api/course/**
+          filters:
+            - StripPrefix=1
+            - AuthFilter
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 200
+                redis-rate-limiter.burstCapacity: 400
+                key-resolver: "#{@ipKeyResolver}"
+        
+        # 学习服务路由
+        - id: learning-service
+          uri: lb://learning-service
+          predicates:
+            - Path=/api/learning/**
+          filters:
+            - StripPrefix=1
+            - AuthFilter
+        
+        # 考试服务路由
+        - id: exam-service
+          uri: lb://exam-service
+          predicates:
+            - Path=/api/exam/**
+          filters:
+            - StripPrefix=1
+            - AuthFilter
+        
+        # 直播服务路由
+        - id: live-service
+          uri: lb://live-service
+          predicates:
+            - Path=/api/live/**
+          filters:
+            - StripPrefix=1
+            - AuthFilter
+        
+        # AI服务路由
+        - id: ai-service
+          uri: lb://ai-service
+          predicates:
+            - Path=/api/ai/**
+          filters:
+            - StripPrefix=1
+            - AuthFilter
+        
+        # 数据分析服务路由
+        - id: analytics-service
+          uri: lb://analytics-service
+          predicates:
+            - Path=/api/analytics/**
+          filters:
+            - StripPrefix=1
+            - AuthFilter
+      
+      # 全局CORS配置
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+
+  # Redis配置
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+
+# 日志配置
+logging:
+  level:
+    com.smartlearning.gateway: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} - %msg%n"
+
+# 监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    health:
+      show-details: always
