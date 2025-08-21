@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartlearning.user.mapper.UserStatsMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="com.smartlearning.user.entity.UserStats">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="total_study_time" property="totalStudyTime" jdbcType="INTEGER"/>
+        <result column="enrolled_courses" property="enrolledCourses" jdbcType="INTEGER"/>
+        <result column="completed_courses" property="completedCourses" jdbcType="INTEGER"/>
+        <result column="completed_lessons" property="completedLessons" jdbcType="INTEGER"/>
+        <result column="note_count" property="noteCount" jdbcType="INTEGER"/>
+        <result column="favorite_count" property="favoriteCount" jdbcType="INTEGER"/>
+        <result column="exam_count" property="examCount" jdbcType="INTEGER"/>
+        <result column="exam_pass_count" property="examPassCount" jdbcType="INTEGER"/>
+        <result column="average_score" property="averageScore" jdbcType="DECIMAL"/>
+        <result column="total_points" property="totalPoints" jdbcType="INTEGER"/>
+        <result column="current_level" property="currentLevel" jdbcType="INTEGER"/>
+        <result column="continuous_days" property="continuousDays" jdbcType="INTEGER"/>
+        <result column="max_continuous_days" property="maxContinuousDays" jdbcType="INTEGER"/>
+        <result column="last_study_time" property="lastStudyTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="deleted" property="deleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <!-- 基础列 -->
+    <sql id="Base_Column_List">
+        id, user_id, total_study_time, enrolled_courses, completed_courses, completed_lessons,
+        note_count, favorite_count, exam_count, exam_pass_count, average_score, total_points,
+        current_level, continuous_days, max_continuous_days, last_study_time,
+        create_time, update_time, deleted
+    </sql>
+
+    <!-- 根据用户ID查询用户统计 -->
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM user_stats
+        WHERE user_id = #{userId} AND deleted = 0
+    </select>
+
+    <!-- 更新学习时长 -->
+    <update id="updateStudyTime">
+        UPDATE user_stats
+        SET total_study_time = total_study_time + #{duration},
+            last_study_time = NOW(),
+            update_time = NOW()
+        WHERE user_id = #{userId} AND deleted = 0
+    </update>
+
+    <!-- 更新课程统计 -->
+    <update id="updateCourseStats">
+        UPDATE user_stats
+        SET enrolled_courses = #{enrolledCourses},
+            completed_courses = #{completedCourses},
+            completed_lessons = #{completedLessons},
+            update_time = NOW()
+        WHERE user_id = #{userId} AND deleted = 0
+    </update>
+
+    <!-- 更新考试统计 -->
+    <update id="updateExamStats">
+        UPDATE user_stats
+        SET exam_count = #{examCount},
+            exam_pass_count = #{examPassCount},
+            average_score = #{averageScore},
+            update_time = NOW()
+        WHERE user_id = #{userId} AND deleted = 0
+    </update>
+
+    <!-- 更新积分和等级 -->
+    <update id="updatePointsAndLevel">
+        UPDATE user_stats
+        SET total_points = #{totalPoints},
+            current_level = #{currentLevel},
+            update_time = NOW()
+        WHERE user_id = #{userId} AND deleted = 0
+    </update>
+
+    <!-- 更新连续学习天数 -->
+    <update id="updateContinuousDays">
+        UPDATE user_stats
+        SET continuous_days = #{continuousDays},
+            max_continuous_days = #{maxContinuousDays},
+            update_time = NOW()
+        WHERE user_id = #{userId} AND deleted = 0
+    </update>
+
+    <!-- 初始化用户统计 -->
+    <insert id="initUserStats">
+        INSERT INTO user_stats (user_id, create_time, update_time)
+        VALUES (#{userId}, NOW(), NOW())
+        ON DUPLICATE KEY UPDATE update_time = NOW()
+    </insert>
+
+</mapper>

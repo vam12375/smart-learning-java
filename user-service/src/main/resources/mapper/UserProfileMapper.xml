@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartlearning.user.mapper.UserProfileMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="com.smartlearning.user.entity.UserProfile">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="real_name" property="realName" jdbcType="VARCHAR"/>
+        <result column="id_card" property="idCard" jdbcType="VARCHAR"/>
+        <result column="education" property="education" jdbcType="VARCHAR"/>
+        <result column="profession" property="profession" jdbcType="VARCHAR"/>
+        <result column="company" property="company" jdbcType="VARCHAR"/>
+        <result column="bio" property="bio" jdbcType="LONGVARCHAR"/>
+        <result column="interests" property="interests" jdbcType="LONGVARCHAR" 
+                typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result column="learning_goals" property="learningGoals" jdbcType="LONGVARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="wechat" property="wechat" jdbcType="VARCHAR"/>
+        <result column="qq" property="qq" jdbcType="VARCHAR"/>
+        <result column="website" property="website" jdbcType="VARCHAR"/>
+        <result column="github" property="github" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="deleted" property="deleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <!-- 基础列 -->
+    <sql id="Base_Column_List">
+        id, user_id, real_name, id_card, education, profession, company, bio, 
+        interests, learning_goals, address, wechat, qq, website, github,
+        create_time, update_time, deleted
+    </sql>
+
+    <!-- 根据用户ID查询用户资料 -->
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM user_profiles
+        WHERE user_id = #{userId} AND deleted = 0
+    </select>
+
+    <!-- 根据用户ID删除用户资料 -->
+    <delete id="deleteByUserId">
+        UPDATE user_profiles 
+        SET deleted = 1, update_time = NOW()
+        WHERE user_id = #{userId} AND deleted = 0
+    </delete>
+
+    <!-- 根据用户ID更新用户资料 -->
+    <update id="updateByUserId">
+        UPDATE user_profiles
+        <set>
+            <if test="profile.realName != null">real_name = #{profile.realName},</if>
+            <if test="profile.idCard != null">id_card = #{profile.idCard},</if>
+            <if test="profile.education != null">education = #{profile.education},</if>
+            <if test="profile.profession != null">profession = #{profile.profession},</if>
+            <if test="profile.company != null">company = #{profile.company},</if>
+            <if test="profile.bio != null">bio = #{profile.bio},</if>
+            <if test="profile.interests != null">interests = #{profile.interests, typeHandler=com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler},</if>
+            <if test="profile.learningGoals != null">learning_goals = #{profile.learningGoals},</if>
+            <if test="profile.address != null">address = #{profile.address},</if>
+            <if test="profile.wechat != null">wechat = #{profile.wechat},</if>
+            <if test="profile.qq != null">qq = #{profile.qq},</if>
+            <if test="profile.website != null">website = #{profile.website},</if>
+            <if test="profile.github != null">github = #{profile.github},</if>
+            update_time = NOW()
+        </set>
+        WHERE user_id = #{userId} AND deleted = 0
+    </update>
+
+</mapper>

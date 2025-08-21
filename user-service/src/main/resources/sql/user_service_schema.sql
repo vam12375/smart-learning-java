@@ -39,26 +39,60 @@ CREATE TABLE IF NOT EXISTS user_profiles (
     user_id BIGINT NOT NULL COMMENT '用户ID',
     real_name VARCHAR(50) COMMENT '真实姓名',
     id_card VARCHAR(20) COMMENT '身份证号',
-    address VARCHAR(255) COMMENT '地址',
-    bio TEXT COMMENT '个人简介',
     education VARCHAR(50) COMMENT '学历',
     profession VARCHAR(100) COMMENT '职业',
-    interests TEXT COMMENT '兴趣爱好(JSON格式)',
-    skills TEXT COMMENT '技能标签(JSON格式)',
-    social_links TEXT COMMENT '社交链接(JSON格式)',
-    preferences TEXT COMMENT '用户偏好设置(JSON格式)',
+    company VARCHAR(100) COMMENT '公司',
+    bio TEXT COMMENT '个人简介',
+    interests TEXT COMMENT '兴趣标签(JSON格式)',
+    learning_goals TEXT COMMENT '学习目标',
+    address VARCHAR(255) COMMENT '地址',
+    wechat VARCHAR(50) COMMENT '微信号',
+    qq VARCHAR(20) COMMENT 'QQ号',
+    website VARCHAR(255) COMMENT '个人网站',
+    github VARCHAR(255) COMMENT 'GitHub地址',
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     deleted TINYINT DEFAULT 0 COMMENT '逻辑删除标识 0:未删除 1:已删除',
-    
+
     UNIQUE KEY uk_user_id (user_id),
     INDEX idx_real_name (real_name),
     INDEX idx_education (education),
     INDEX idx_profession (profession),
     INDEX idx_deleted (deleted),
-    
+
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户资料表';
+
+-- 用户统计表
+CREATE TABLE IF NOT EXISTS user_stats (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '主键ID',
+    user_id BIGINT NOT NULL COMMENT '用户ID',
+    total_study_time INT DEFAULT 0 COMMENT '总学习时长(分钟)',
+    enrolled_courses INT DEFAULT 0 COMMENT '已报名课程数',
+    completed_courses INT DEFAULT 0 COMMENT '已完成课程数',
+    completed_lessons INT DEFAULT 0 COMMENT '已完成课时数',
+    note_count INT DEFAULT 0 COMMENT '学习笔记数',
+    favorite_count INT DEFAULT 0 COMMENT '收藏课程数',
+    exam_count INT DEFAULT 0 COMMENT '考试次数',
+    exam_pass_count INT DEFAULT 0 COMMENT '考试通过次数',
+    average_score DECIMAL(5,2) DEFAULT 0.00 COMMENT '平均考试分数',
+    total_points INT DEFAULT 0 COMMENT '总积分',
+    current_level INT DEFAULT 1 COMMENT '当前等级',
+    continuous_days INT DEFAULT 0 COMMENT '连续学习天数',
+    max_continuous_days INT DEFAULT 0 COMMENT '最长连续学习天数',
+    last_study_time DATETIME COMMENT '最后学习时间',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    deleted TINYINT DEFAULT 0 COMMENT '逻辑删除标识 0:未删除 1:已删除',
+
+    UNIQUE KEY uk_user_id (user_id),
+    INDEX idx_total_points (total_points),
+    INDEX idx_current_level (current_level),
+    INDEX idx_last_study_time (last_study_time),
+    INDEX idx_deleted (deleted),
+
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户统计表';
 
 -- 用户登录日志表
 CREATE TABLE IF NOT EXISTS user_login_logs (

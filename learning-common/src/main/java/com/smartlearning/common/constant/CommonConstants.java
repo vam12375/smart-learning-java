@@ -111,6 +111,7 @@ public class CommonConstants {
     public static class CachePrefix {
         public static final String USER_INFO = "user:info:";
         public static final String USER_PROFILE = "user:profile:";
+        public static final String USER_STATS = "user:stats:";
         public static final String COURSE_INFO = "course:info:";
         public static final String COURSE_LESSONS = "course:lessons:";
         public static final String LEARNING_PROGRESS = "learning:progress:";
@@ -123,6 +124,8 @@ public class CommonConstants {
      */
     public static class CacheExpire {
         public static final long USER_INFO = 30 * 60; // 30分钟
+        public static final long USER_PROFILE = 60 * 60; // 1小时
+        public static final long USER_STATS = 30 * 60; // 30分钟
         public static final long COURSE_INFO = 60 * 60; // 1小时
         public static final long HOT_DATA = 6 * 60 * 60; // 6小时
         public static final long SEARCH_RESULT = 15 * 60; // 15分钟

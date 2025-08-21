@@ -12,68 +12,99 @@ import java.util.List;
 @Data
 @TableName("user_profiles")
 public class UserProfile {
-    
+
     /**
      * 主键ID
      */
     @TableId(type = IdType.AUTO)
     private Long id;
-    
+
     /**
      * 用户ID
      */
     private Long userId;
-    
+
     /**
      * 真实姓名
      */
     private String realName;
-    
+
     /**
      * 身份证号
      */
     private String idCard;
-    
+
     /**
      * 学历
      */
     private String education;
-    
+
     /**
      * 职业
      */
     private String profession;
-    
+
     /**
      * 公司
      */
     private String company;
-    
+
     /**
      * 个人简介
      */
     private String bio;
-    
+
     /**
      * 兴趣标签
      */
     @TableField(typeHandler = com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler.class)
     private List<String> interests;
-    
+
     /**
      * 学习目标
      */
     private String learningGoals;
-    
+
+    /**
+     * 地址
+     */
+    private String address;
+
+    /**
+     * 微信号
+     */
+    private String wechat;
+
+    /**
+     * QQ号
+     */
+    private String qq;
+
+    /**
+     * 个人网站
+     */
+    private String website;
+
+    /**
+     * GitHub地址
+     */
+    private String github;
+
     /**
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createdAt;
-    
+    private LocalDateTime createTime;
+
     /**
      * 更新时间
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updatedAt;
+    private LocalDateTime updateTime;
+
+    /**
+     * 逻辑删除标识
+     */
+    @TableLogic
+    private Integer deleted;
 }
