@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(/E:\\smart-learning-platform\\smart-learning-java\\learning-common/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -20,12 +20,25 @@
             <groupId>com.smartlearning</groupId>
             <artifactId>learning-common</artifactId>
             <version>1.0.0</version>
+            <!-- 排除Spring MVC依赖，Gateway使用WebFlux -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         
         <!-- Spring Cloud Gateway -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
+        </dependency>
+
+        <!-- WebFlux (响应式Web框架) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
         
         <!-- Nacos服务发现 -->

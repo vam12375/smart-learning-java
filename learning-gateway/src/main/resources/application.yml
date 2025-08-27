@@ -5,15 +5,22 @@ spring:
   application:
     name: learning-gateway
   
+  config:
+    import: optional:nacos:learning-server.yml
+  
   cloud:
     nacos:
       discovery:
         server-addr: localhost:8848
         namespace: learning-platform
+        username: nacos
+        password: nacos
       config:
         server-addr: localhost:8848
         file-extension: yml
         namespace: learning-platform
+        username: nacos
+        password: nacos
     
     gateway:
       discovery:

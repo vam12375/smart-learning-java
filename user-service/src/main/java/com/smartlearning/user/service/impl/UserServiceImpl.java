@@ -92,8 +92,8 @@ public class UserServiceImpl implements UserService {
     public LoginResponse login(LoginRequest request, String clientIp) {
         log.info("用户登录请求: {}", request.getUsername());
 
-        // 查询用户
-        User user = findByUsernameOrEmail(request.getUsername());
+        // 查询用户（登录时直接从数据库查询，不使用缓存，确保获取到密码字段）
+        User user = userMapper.findByUsernameOrEmail(request.getUsername(), request.getUsername());
         if (user == null) {
             throw new BusinessException(ResultCode.USERNAME_OR_PASSWORD_ERROR);
         }

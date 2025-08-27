@@ -17,6 +17,8 @@ spring:
         group: DEFAULT_GROUP
         cluster-name: DEFAULT
         service: ${spring.application.name}
+        username: nacos
+        password: nacos
         metadata:
           version: 1.0.0
           zone: dev
@@ -25,6 +27,8 @@ spring:
         namespace: smart-learning
         group: DEFAULT_GROUP
         file-extension: yml
+        username: nacos
+        password: nacos
         shared-configs:
           - data-id: common-config.yml
             group: DEFAULT_GROUP
@@ -61,6 +65,26 @@ spring:
       max-pool-prepared-statement-per-connection-size: 20
       filters: stat,wall
 
+  # Redis配置
+  redis:
+    host: localhost
+    port: 6379
+    password:
+    database: 1
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1ms
+
+  # Elasticsearch配置
+  elasticsearch:
+    uris: http://localhost:9200
+    connection-timeout: 3s
+    socket-timeout: 10s
+
 # MyBatis Plus配置
 mybatis-plus:
   configuration:
@@ -74,28 +98,6 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
   mapper-locations: classpath*:mapper/*.xml
-
-# Redis配置
-spring:
-  redis:
-    host: localhost
-    port: 6379
-    password: redis123456
-    database: 1
-    timeout: 3000ms
-    lettuce:
-      pool:
-        max-active: 8
-        max-idle: 8
-        min-idle: 0
-        max-wait: -1ms
-
-# Elasticsearch配置
-spring:
-  elasticsearch:
-    uris: http://localhost:9200
-    connection-timeout: 3s
-    socket-timeout: 10s
 
 # 日志配置
 logging:
