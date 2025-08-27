@@ -1,13 +1,13 @@
 server:
-  port: 8083
+  port: 8086
 
 spring:
   application:
-    name: learning-service
-  
+    name: live-service
+
   profiles:
     active: dev
-  
+
   # Nacos配置
   cloud:
     nacos:
@@ -54,11 +54,35 @@ spring:
       initial-size: 5
       min-idle: 5
       max-active: 20
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
 
-  # MongoDB配置
-  data:
-    mongodb:
-      uri: mongodb://admin:admin123456@localhost:27017/smart_learning?authSource=admin
+  # Redis配置
+  redis:
+    host: localhost
+    port: 6379
+    password: 
+    database: 4
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1ms
+
+  # WebSocket配置
+  websocket:
+    enabled: true
+    path: /ws
+    allowed-origins: "*"
 
 # MyBatis Plus配置
 mybatis-plus:
@@ -72,33 +96,63 @@ mybatis-plus:
       logic-delete-field: deleted
       logic-delete-value: 1
       logic-not-delete-value: 0
-
-  # Redis配置
-  redis:
-    host: localhost
-    port: 6379
-    password:
-    database: 2
-    timeout: 3000ms
+  mapper-locations: classpath*:mapper/*.xml
 
 # 日志配置
 logging:
   level:
-    com.smartlearning.learning: DEBUG
+    com.smartlearning.live: DEBUG
     com.smartlearning.common: DEBUG
   file:
-    name: logs/learning-service.log
+    name: logs/live-service.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} - %msg%n"
 
-# 监控配置
+# 管理端点配置
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
 
-# 应用信息
-info:
-  app:
-    name: ${spring.application.name}
-    description: 学习服务 - 负责学习记录、进度跟踪、笔记管理
-    version: 1.0.0
+# 直播配置
+live:
+  # WebRTC配置
+  webrtc:
+    stun-servers:
+      - stun:stun.l.google.com:19302
+      - stun:stun1.l.google.com:19302
+    turn-servers:
+      - url: turn:localhost:3478
+        username: turnuser
+        password: turnpass
+  
+  # 直播流配置
+  stream:
+    # RTMP推流地址
+    rtmp-url: rtmp://localhost:1935/live/
+    # HLS播放地址
+    hls-url: http://localhost:8080/hls/
+    # 录制配置
+    record:
+      enabled: true
+      path: /data/recordings/
+      format: mp4
+  
+  # 聊天室配置
+  chat:
+    max-message-length: 500
+    rate-limit:
+      messages-per-minute: 30
+    banned-words:
+      - spam
+      - 广告
+  
+  # 直播间配置
+  room:
+    max-viewers: 1000
+    auto-close-minutes: 30
