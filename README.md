@@ -236,6 +236,8 @@ chore: 构建过程或辅助工具的变动
 
 ## 📞 联系方式
 
-- 项目维护者: Smart Learning Team
-- 邮箱: dev@smartlearning.com
-- 项目地址: https://github.com/smart-learning/platform
+- 项目维护者: 青柠檬
+- 邮箱: 2898191344@qq.com
+- 项目地址: https://github.com/vam12375/smart-learning-java
+
+
