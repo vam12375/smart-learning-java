@@ -29,23 +29,22 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    command: redis-server --appendonly yes --requirepass 
+    command: redis-server --appendonly yes 
     networks:
       - smart-learning-network
 
   # MongoDB
   mongodb:
-    image: mongo:6.0
+    image: mongo:8.0
     container_name: smart-learning-mongodb
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin123456
       MONGO_INITDB_DATABASE: smart_learning
     ports:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+      - ./docker/mongodb/init:/docker-entrypoint-initdb.d
     networks:
       - smart-learning-network
 

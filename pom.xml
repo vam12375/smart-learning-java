@@ -41,7 +41,7 @@
         <mysql.version>8.0.33</mysql.version>
         <mybatis-plus.version>3.5.4</mybatis-plus.version>
         <druid.version>1.2.20</druid.version>
-        <mongodb.version>4.11.1</mongodb.version>
+        <mongodb.version>4.9.1</mongodb.version>
 
         <!-- 缓存相关 -->
         <redisson.version>3.24.3</redisson.version>

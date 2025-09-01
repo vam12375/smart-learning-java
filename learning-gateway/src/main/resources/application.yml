@@ -41,6 +41,18 @@ spring:
                 redis-rate-limiter.replenishRate: 100
                 redis-rate-limiter.burstCapacity: 200
                 key-resolver: "#{@ipKeyResolver}"
+
+        # 用户服务静态资源路由
+        - id: user-service-uploads
+          uri: lb://user-service
+          predicates:
+            - Path=/uploads/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 200
+                redis-rate-limiter.burstCapacity: 400
+                key-resolver: "#{@ipKeyResolver}"
         
         # 课程服务路由
         - id: course-service
@@ -64,6 +76,14 @@ spring:
           filters:
             - StripPrefix=1
             - AuthFilter
+
+        # MongoDB学习服务路由（无需认证，用于开发测试）
+        - id: mongo-learning-service
+          uri: lb://learning-service
+          predicates:
+            - Path=/api/mongo/learning/**
+          filters:
+            - StripPrefix=1
         
         # 考试服务路由
         - id: exam-service

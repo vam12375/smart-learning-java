@@ -3,6 +3,8 @@ package com.smartlearning.course.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.smartlearning.common.annotation.RedisCache;
+import com.smartlearning.common.annotation.RedisEvict;
 import com.smartlearning.common.constant.CommonConstants;
 import com.smartlearning.common.exception.BusinessException;
 import com.smartlearning.common.result.ResultCode;
@@ -82,6 +84,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @RedisEvict(key = "#courseId", prefix = "course")
     public Course updateCourse(Long courseId, CourseCreateRequest request, Long teacherId) {
         log.info("更新课程请求: courseId={}, teacherId={}", courseId, teacherId);
 
@@ -132,6 +135,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @RedisEvict(key = "#courseId", prefix = "course")
     public boolean deleteCourse(Long courseId, Long teacherId) {
         log.info("删除课程请求: courseId={}, teacherId={}", courseId, teacherId);
 
@@ -167,53 +171,23 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @RedisCache(key = "#courseId", prefix = "course")
     public Course findById(Long courseId) {
         if (courseId == null) {
             return null;
         }
-
-        // 先从缓存查询
-        String cacheKey = CommonConstants.CachePrefix.COURSE_INFO + courseId;
-        Course cachedCourse = (Course) redisTemplate.opsForValue().get(cacheKey);
-        if (cachedCourse != null) {
-            return cachedCourse;
-        }
-
-        // 从数据库查询
-        Course course = courseMapper.selectById(courseId);
-
-        // 缓存查询结果
-        if (course != null) {
-            redisTemplate.opsForValue().set(cacheKey, course,
-                    CommonConstants.CacheExpire.COURSE_INFO, TimeUnit.SECONDS);
-        }
-
-        return course;
+        
+        return courseMapper.selectById(courseId);
     }
 
     @Override
+    @RedisCache(key = "#courseId", prefix = "course:detail")
     public CourseVO getCourseDetail(Long courseId) {
         if (courseId == null) {
             return null;
         }
-
-        // 先从缓存查询
-        String cacheKey = "course:detail:" + courseId;
-        CourseVO cachedCourse = (CourseVO) redisTemplate.opsForValue().get(cacheKey);
-        if (cachedCourse != null) {
-            return cachedCourse;
-        }
-
-        // 从数据库查询
-        CourseVO courseVO = courseMapper.selectCourseDetail(courseId);
-
-        // 缓存查询结果
-        if (courseVO != null) {
-            redisTemplate.opsForValue().set(cacheKey, courseVO,
-                    CommonConstants.CacheExpire.COURSE_INFO, TimeUnit.SECONDS);
-        }
-
-        return courseVO;
+        
+        return courseMapper.selectCourseDetail(courseId);
     }
 
     @Override
@@ -233,47 +207,15 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @RedisCache(key = "#limit", prefix = "course:recommended", timeout = 1800)
     public List<CourseVO> getRecommendedCourses(Integer limit) {
-        // 先从缓存查询
-        String cacheKey = "course:recommended:" + limit;
-        @SuppressWarnings("unchecked")
-        List<CourseVO> cachedCourses = (List<CourseVO>) redisTemplate.opsForValue().get(cacheKey);
-        if (cachedCourses != null) {
-            return cachedCourses;
-        }
-
-        // 从数据库查询
-        List<CourseVO> courses = courseMapper.selectRecommendedCourses(limit);
-
-        // 缓存查询结果
-        if (courses != null && !courses.isEmpty()) {
-            redisTemplate.opsForValue().set(cacheKey, courses,
-                    CommonConstants.CacheExpire.HOT_DATA, TimeUnit.SECONDS);
-        }
-
-        return courses;
+        return courseMapper.selectRecommendedCourses(limit);
     }
 
     @Override
+    @RedisCache(key = "#limit", prefix = "course:popular", timeout = 1800)
     public List<CourseVO> getPopularCourses(Integer limit) {
-        // 先从缓存查询
-        String cacheKey = "course:popular:" + limit;
-        @SuppressWarnings("unchecked")
-        List<CourseVO> cachedCourses = (List<CourseVO>) redisTemplate.opsForValue().get(cacheKey);
-        if (cachedCourses != null) {
-            return cachedCourses;
-        }
-
-        // 从数据库查询
-        List<CourseVO> courses = courseMapper.selectPopularCourses(limit);
-
-        // 缓存查询结果
-        if (courses != null && !courses.isEmpty()) {
-            redisTemplate.opsForValue().set(cacheKey, courses,
-                    CommonConstants.CacheExpire.HOT_DATA, TimeUnit.SECONDS);
-        }
-
-        return courses;
+        return courseMapper.selectPopularCourses(limit);
     }
 
     @Override

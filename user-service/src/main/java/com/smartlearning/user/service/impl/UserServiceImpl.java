@@ -129,7 +129,7 @@ public class UserServiceImpl implements UserService {
         userInfo.setUsername(user.getUsername());
         userInfo.setEmail(user.getEmail());
         userInfo.setNickname(user.getNickname());
-        userInfo.setAvatar(user.getAvatarUrl());
+        userInfo.setAvatarUrl(user.getAvatarUrl());
         userInfo.setRole(user.getRole());
         response.setUserInfo(userInfo);
 
@@ -180,7 +180,7 @@ public class UserServiceImpl implements UserService {
         userInfo.setUsername(user.getUsername());
         userInfo.setEmail(user.getEmail());
         userInfo.setNickname(user.getNickname());
-        userInfo.setAvatar(user.getAvatarUrl());
+        userInfo.setAvatarUrl(user.getAvatarUrl());
         userInfo.setRole(user.getRole());
         response.setUserInfo(userInfo);
 
@@ -262,7 +262,12 @@ public class UserServiceImpl implements UserService {
         clearUserCache(userId, existingUser.getUsername(), existingUser.getEmail());
 
         // 返回更新后的用户信息
-        return findById(userId);
+        User updatedUser = findById(userId);
+        if (updatedUser != null) {
+            // 清除敏感信息
+            updatedUser.setPassword(null);
+        }
+        return updatedUser;
     }
 
     @Override

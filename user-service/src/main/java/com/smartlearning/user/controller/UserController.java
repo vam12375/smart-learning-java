@@ -72,6 +72,10 @@ public class UserController {
     public Result<User> getUserProfile(@RequestHeader("X-User-Id") Long userId) {
         log.info("获取用户信息请求: userId={}", userId);
         User user = userService.findById(userId);
+        if (user != null) {
+            // 清除敏感信息
+            user.setPassword(null);
+        }
         return Result.success("获取成功", user);
     }
 

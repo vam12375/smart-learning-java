@@ -55,6 +55,7 @@ public class SecurityConfig {
                                 "/api/user/refresh-token",
                                 "/api/user/check-username",
                                 "/api/user/check-email",
+                                "/uploads/**",
                                 "/actuator/**",
                                 "/druid/**",
                                 "/swagger-ui/**",

@@ -80,7 +80,6 @@ spring:
   redis:
     host: localhost
     port: 6379
-    password:
     database: 0
     timeout: 3000ms
     lettuce:
@@ -109,6 +108,13 @@ jwt:
   secret: smart-learning-platform-secret-key-for-jwt-token-user-service
   expiration: 86400  # 24小时
   refresh-expiration: 604800  # 7天
+
+# 文件上传配置
+file:
+  upload:
+    path: ./uploads  # 文件上传路径
+    domain: http://localhost:8081  # 文件访问域名
+    max-size: 5242880  # 最大文件大小 5MB
 
 # 日志配置
 logging:

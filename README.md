@@ -27,14 +27,14 @@ smart-learning-platform/
 
 - **后端框架**: Spring Boot 3.2, Spring Cloud 2023
 - **开发语言**: Java 21
-- **服务注册**: Nacos 2.3.0
+- **服务注册**: Nacos 3.0.2
 - **API网关**: Spring Cloud Gateway
-- **数据库**: MySQL 8.0, MongoDB 6.0
+- **数据库**: MySQL 8.0, MongoDB 8.0
 - **缓存**: Redis 7.0, Redisson
 - **搜索引擎**: Elasticsearch 8.11
 - **消息队列**: RabbitMQ 3.12
 - **对象存储**: MinIO
-- **容器化**: Docker, Docker Compose
+- **容器化**: Docker, Kubernetes
 
 ## 🚀 快速开始
 
@@ -76,7 +76,7 @@ docker-compose logs -f [service-name]
 | Nacos控制台      | http://localhost:8848/nacos | nacos/nacos       |
 | MySQL数据库      | localhost:3306              | root/admin        |
 | Redis         | localhost:6379              | - /               |
-| MongoDB       | localhost:27017             | admin/admin123456 |
+| MongoDB       | localhost:27017             | / |
 | Elasticsearch | http://localhost:9200       | -                 |
 | Kibana        | http://localhost:5601       | -                 |
 | RabbitMQ管理界面  | http://localhost:15672      | admin/admin123456 |

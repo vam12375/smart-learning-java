@@ -5,7 +5,11 @@ import com.smartlearning.ai.service.RecommendationAlgorithmService;
 import com.smartlearning.common.feign.CourseServiceClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -23,6 +27,12 @@ public class RecommendationAlgorithmServiceImpl implements RecommendationAlgorit
     private final UserBehaviorMapper userBehaviorMapper;
     private final CourseServiceClient courseServiceClient;
     private final RedisTemplate<String, Object> redisTemplate;
+
+    @Value("${recommendation.cache.ttl.hybrid:30}")
+    private long hybridRecommendationTtl;
+
+    @Value("${recommendation.cache.ttl.popular:60}")
+    private long popularRecommendationTtl;
 
     @Override
     public List<Map<String, Object>> collaborativeFiltering(Long userId, Integer count) {
@@ -185,8 +195,8 @@ public class RecommendationAlgorithmServiceImpl implements RecommendationAlgorit
                 })
                 .collect(Collectors.toList());
 
-        // 缓存结果（30分钟）
-        redisTemplate.opsForValue().set(cacheKey, result, 30, TimeUnit.MINUTES);
+        // 缓存结果
+        redisTemplate.opsForValue().set(cacheKey, result, hybridRecommendationTtl, TimeUnit.MINUTES);
 
         return result;
     }
@@ -213,8 +223,8 @@ public class RecommendationAlgorithmServiceImpl implements RecommendationAlgorit
             recommendations.add(recommendation);
         }
 
-        // 缓存结果（1小时）
-        redisTemplate.opsForValue().set(cacheKey, recommendations, 1, TimeUnit.HOURS);
+        // 缓存结果
+        redisTemplate.opsForValue().set(cacheKey, recommendations, popularRecommendationTtl, TimeUnit.MINUTES);
 
         return recommendations;
     }
@@ -315,7 +325,16 @@ public class RecommendationAlgorithmServiceImpl implements RecommendationAlgorit
 
         try {
             // 1. 清除相关缓存
-            Set<String> keys = redisTemplate.keys("recommendation:*");
+            Set<String> keys = redisTemplate.execute((RedisConnection connection) -> {
+                Set<String> keysToDelete = new HashSet<>();
+                try (Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions().match("recommendation:*").count(1000).build())) {
+                    while (cursor.hasNext()) {
+                        keysToDelete.add(new String(cursor.next()));
+                    }
+                }
+                return keysToDelete;
+            });
+
             if (keys != null && !keys.isEmpty()) {
                 redisTemplate.delete(keys);
                 log.info("清除推荐缓存: {} 个key", keys.size());
